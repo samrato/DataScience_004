@@ -1,112 +1,90 @@
----
+🏆 World Cup 2018 Squads Data Cleaner
 
-# FIFA 21 Data Wrangling & Tableau Preparation
+This project contains a Python function to load, clean, and prepare the 2018 FIFA World Cup squads data for use in analysis tools like Tableau.
 
-## Project Overview
+📄 File: wrangle_world_cup_squads.py
+Function: wrangle_world_cup_squads(file_path)
+Purpose
 
-This project cleans and prepares the FIFA 21 raw dataset for analysis and visualization in Tableau. The goal is to transform messy raw data into a clean, structured format suitable for exploring player performance, market value, and club/nationality insights.
+Preprocess the 2018 World Cup squads dataset to ensure it is clean, standardized, and ready for visualization or analysis.
 
----
+✅ Features
 
-## Features
+📥 Loads data from an Excel file
 
-* Cleans categorical and numeric columns.
-* Converts monetary values (Value, Wage) into numeric format.
-* Handles missing and unrealistic values.
-* Adds calculated fields like `Value_per_OVA`, `Wage_per_OVA`, and `Age_Group`.
-* Produces a clean CSV ready for Tableau dashboards.
+🧹 Cleans and standardizes string fields (e.g. team names, player names)
 
----
+📆 Parses dates and calculates player ages
 
-## Dataset
+🔢 Ensures numeric fields like caps and goals are properly typed
 
-* **File:** `fifa21 raw data v2.csv`
-* **Size:** 18,979 entries, 77 columns
-* **Key Columns Used:**
+🧮 Creates age group categories for better grouping in visual tools
 
-  * Player Info: `Name`, `LongName`, `Nationality`, `Club`, `Positions`, `Preferred Foot`, `Best Position`
-  * Ratings: `OVA`, `POT`, `PHY`, `PAC`, `SHO`, `PAS`, `DRI`, `DEF`
-  * Financials: `Value`, `Wage`
-  * Others: `Age`
+📤 Exports cleaned data to CSV: world_cup_2018_squads_cleaned.csv
 
----
+📊 Output
 
-## How It Works
+The output CSV will include the following cleaned and enriched fields:
 
-### Steps Performed in `wrangle_fifa_data`:
+Type
 
-1. **Load CSV**
+Team
 
-   * Load the raw FIFA 21 dataset into a Pandas DataFrame.
-   * Rename special columns (like `↓OVA`) for easier reference.
+Group
 
-2. **Clean Categorical Columns**
+Position
 
-   * Strip spaces and standardize capitalization.
-   * Fill missing values with `'Unknown'`.
+Name
 
-3. **Clean Numeric Columns**
+Country and Club
 
-   * Convert ratings, age, and skill stats to numeric.
-   * Invalid entries are converted to NaN.
+DOB
 
-4. **Convert Monetary Columns**
+Age
 
-   * Remove symbols and letters (`€`, `M`, `K`).
-   * Convert to float and scale according to millions or thousands.
+Caps
 
-5. **Handle Missing and Unrealistic Data**
-   * Drop rows missing `OVA`, `POT`, or `Age`.
-   * Remove rows with impossible values (e.g., Age <16 or >49, OVA/POT ≤ 0).
-6. **Add Calculated Fields**
-   * `Value_per_OVA` → market value efficiency
-   * `Wage_per_OVA` → wage efficiency
-   * `Age_Group` → categorized player age groups for analysis
-7. **Save Cleaned CSV**
-   * Saves as `fifa21_cleaned.csv` for Tableau or other visualization tools.
+Goals
 
----
-## Usage
+Age_Group (<20, 20-24, 25-29, 30+)
 
-```python
-from wrangle_fifa import wrangle_fifa_data
-# Clean FIFA 21 dataset
-df_cleaned = wrangle_fifa_data("fifa21 raw data v2.csv")
-```
+🧪 Example Usage
+from wrangle_world_cup_squads import wrangle_world_cup_squads
 
-* The function returns a cleaned DataFrame.
-* A new CSV `fifa21_cleaned.csv` is created for Tableau dashboards.
----
-## Insights for Tableau
-You can use the cleaned dataset to build dashboards on:
-1. **Player Ratings & Potential**
-   * Scatter plots of OVA vs POT
-   * Histograms of OVA distribution
-   * Boxplots per position
-2. **Value & Wage Analysis**
-   * Total value per club
-   * Average value by nationality
-   * Value_per_OVA and Wage_per_OVA comparisons
-3. **Age & Demographics**
-   * Age distribution histograms
-   * Age group performance per position
-   * Preferred foot distribution
-4. **Position & Skill Stats**
-   * Compare skill stats per position using radar or heatmap charts
-   * Correlation of OVA with individual skill attributes
-5. **Club & Nationality Insights**
-   * Club strength comparison (Avg OVA/POT)
-   * Tree map of nationality vs player count & avg rating
-   * ROI of players by club using Value_per_OVA
----
-## Requirements
-* Python 3.x
-* Pandas
-* Jupyter Notebook (optional, recommended for visualization prep)
----
-## Notes
-* This project is designed for **data cleaning and preparation**. Tableau or Python visualizations can be built on the cleaned dataset.
-* Ensure the raw CSV file `fifa21 raw data v2.csv` is in the same directory as the notebook or script.
+# Load and clean the data
+df_cleaned = wrangle_world_cup_squads("world_cup_2018_squads.xlsx")
 
----
+⚠️ Notes
 
+Rows with missing or invalid DOB, Caps, or Goals will be removed.
+
+Age is calculated based on the current year, which may slightly differ from the exact tournament age.
+
+Make sure the Excel file contains columns named exactly as expected: Type, Team, Group, Position, Name, Country and Club, DOB, Caps, Goals.
+
+🗂️ Files
+File	Description
+wrangle_world_cup_squads.py	Python script for cleaning the dataset
+world_cup_2018_squads.xlsx	Input Excel file with raw data (not included)
+world_cup_2018_squads_cleaned.csv	Output CSV file with cleaned data
+📈 Suggested Use in Tableau
+
+Once you have the world_cup_2018_squads_cleaned.csv, you can:
+
+Import it into Tableau
+
+Use Team, Group, Position, and Age_Group for filtering/grouping
+
+Visualize age distribution, goals per age group, caps per team, etc.
+
+📌 Requirements
+
+Python 3.7+
+
+pandas
+
+openpyxl (required for reading .xlsx files)
+
+Install dependencies:
+
+pip install pandas openpyxl
