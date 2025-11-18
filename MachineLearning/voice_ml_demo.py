@@ -1,14 +1,14 @@
 import streamlit as st
-import sounddevice as sd
 import numpy as np
-import tempfile
-import scipy.io.wavfile as wav
-import pyttsx3
 from sklearn.linear_model import LinearRegression
+import pyttsx3
+import sounddevice as sd
+import scipy.io.wavfile as wav
+import tempfile
 import speech_recognition as sr
 
 # ---------------------------
-# Train ML Model
+# Train a simple ML model
 # ---------------------------
 xs = np.array([-1, 0, 1, 2, 3, 4]).reshape(-1, 1)
 ys = np.array([-2, 1, 4, 7, 10, 13])
@@ -16,7 +16,7 @@ model = LinearRegression()
 model.fit(xs, ys)
 
 # ---------------------------
-# Text-to-Speech
+# Text-to-Speech Engine
 # ---------------------------
 engine = pyttsx3.init()
 def speak(msg):
@@ -24,7 +24,7 @@ def speak(msg):
     engine.runAndWait()
 
 # ---------------------------
-# Voice Recording with sounddevice
+# Voice Recognition Function
 # ---------------------------
 def listen_voice(duration=5, fs=44100):
     st.write(f"🎧 Recording for {duration} seconds...")
@@ -35,18 +35,24 @@ def listen_voice(duration=5, fs=44100):
         st.error(f"❌ Could not record audio: {e}")
         return ""
 
-    # Save to temp WAV
-    temp_wav = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
-    wav.write(temp_wav.name, fs, recording)
+    # Convert float32 (-1.0 to 1.0) → int16 PCM for SpeechRecognition
+    recording_int16 = np.int16(recording * 32767)
 
-    # Recognize with SpeechRecognition
+    # Save to temporary WAV file
+    temp_wav = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+    wav.write(temp_wav.name, fs, recording_int16)
+
+    # Recognize speech
     recognizer = sr.Recognizer()
     with sr.AudioFile(temp_wav.name) as source:
         audio = recognizer.record(source)
+
     try:
         text = recognizer.recognize_google(audio)
         return text
-    except:
+    except sr.UnknownValueError:
+        return ""
+    except sr.RequestError:
         return ""
 
 # ---------------------------
@@ -55,9 +61,9 @@ def listen_voice(duration=5, fs=44100):
 st.title("🎤 Voice Machine Learning Demo")
 st.write("Speak a number and the ML model will predict the output!")
 
+# Voice Input Button
 if st.button("🎙️ Speak a Number"):
     st.write("Processing your voice...")
-
     text = listen_voice()
 
     if text.strip() == "":
@@ -74,7 +80,7 @@ if st.button("🎙️ Speak a Number"):
             st.error("❌ That doesn't seem to be a valid number.")
             speak("That is not a valid number.")
 
-# Optional: fallback text input
+# Optional Text Fallback
 number_input = st.text_input("Or type a number if voice fails:")
 if number_input:
     try:
