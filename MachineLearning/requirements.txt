@@ -1,0 +1,7 @@
+streamlit
+SpeechRecognition
+pyttsx3
+numpy
+scikit-learn
+pyaudio
+python-dotenv
